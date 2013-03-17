@@ -1,25 +1,18 @@
 ;Mapeamento da linguagem
-(define F  ;Desenha um traço pra frente
-             (make-svg-line 50   100
-                                       100 100
-                                       "blue"
-                                       "green"
-                                       5)
-            )
+(define I  ;Desenha um traço pra frente
+  (lambda (angulo)
+    (make-svg-line 50 100 ;x e y inicial 
+                   (* (cos angulo) 100); x final * angulo
+                   (* (sin angulo) 100); y inicial * angulo
+                   "blue" ;cor do preenchimento
+                   "green" ; contorno
+                   5)))
 
 (define lsystems
-  (lambda (axioma )
-    (print axioma)
-    (print (string? axioma))
-    (print (symbol? axioma))
-    (print (list? axioma))
-    (print (list? (cons axioma axioma)))
-    (print (cons axioma axioma))
-    (print (cdr(list axioma)))
-    (make-svg-image (list axioma))))
-    (print (list axioma))
+  (lambda (axioma ) ; falta fazer um parse de axioma pra uma lista.
+    (make-svg-image (list (I 1.23) (I 0.3432)))))
 
-(define imagem (lsystems 'F))
+(define imagem (lsystems '(I 1.32)))
 
 (xml-write-tag imagem)
 
