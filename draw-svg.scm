@@ -1,3 +1,71 @@
+(define xml-write-attribute
+  (lambda (name-value)
+    (let ((name  (car name-value))
+          (value (cadr name-value)))
+      (display " ")
+      (display name)
+      (display "=\"")
+      (display value)
+      (display "\""))))
+
+
+(define xml-write-open-tag
+  (lambda (name attr)
+    (display "<")
+    (display name)
+    (for-each xml-write-attribute attr)
+    (display ">")
+    (newline)))
+
+
+(define xml-write-close-tag
+  (lambda (name)
+    (display "</")
+    (display name)
+    (display ">")
+    (newline)))
+
+
+;; Retorna os atributos como uma lista de associação
+;; e a sublista onde começa o texto dentro da tag.
+(define get-attr-list/start-data
+  (lambda (lst)
+    (let next ((lst  lst)
+               (attr '()))
+      (if (or (null? lst)
+              (not (symbol? (car lst))))
+          (list (reverse attr) lst)
+          (next (cddr lst)
+                (cons (list (car lst)
+                            (cadr lst))
+                      attr))))))
+
+;; Traduz a parte interna do XML e a escreve
+(define xml-write-data
+  (lambda (lst)
+    (if (not (null? lst))
+        (let ((element (car lst)))
+          (if (string? element)
+              (display element)
+              (xml-write-tag element))
+          (xml-write-data (cdr lst))))))
+
+;; Recebe uma tag XML, traduz a tag e a escreve
+(define xml-write-tag
+  (lambda (tag-object)
+    (let ((tag-name (car tag-object))
+          (attr/start-data (get-attr-list/start-data
+                                (cdr tag-object))))
+      
+      (let ((attr (car attr/start-data))
+            (start-data (cadr attr/start-data)))
+        
+        (xml-write-open-tag tag-name attr)
+        (xml-write-data start-data))
+      (xml-write-close-tag tag-name))))
+
+
+
 (define number->string/maybe
   (lambda (x)
     (if (number? x)

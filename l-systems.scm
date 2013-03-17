@@ -13,9 +13,13 @@
     (print (string? axioma))
     (print (symbol? axioma))
     (print (list? axioma))
+    (print (list? (cons axioma axioma)))
+    (print (cons axioma axioma))
+    (print (cdr(list axioma)))
     (make-svg-image (list axioma))))
+    (print (list axioma))
 
-(define imagem (lsystems F))
+(define imagem (lsystems 'F))
 
 (xml-write-tag imagem)
 
