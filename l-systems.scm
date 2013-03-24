@@ -1,9 +1,9 @@
 ;Mapeamento da linguagem
 (define I  ;Desenha um traço pra frente
   (lambda (angulo)
-    (make-svg-line 50 100 ;x e y inicial 
-                   (* (cos angulo) 100); x final * angulo
-                   (* (sin angulo) 100); y inicial * angulo
+    (make-svg-line 100 100 ;x e y inicial 
+                   (* (cos  angulo) 200); x final * angulo
+                   (* (sin angulo) 200); y inicial * angulo
                    "blue" ;cor do preenchimento
                    "green" ; contorno
                    5)))
