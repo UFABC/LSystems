@@ -13,8 +13,8 @@
     (newline out)
     (flush-output out) ;; esvazia o buffer, mandando o que estiver pendente
     (let ((linha (read-line in))) ;; lê da porta in
-      (display (format "O Fulano disse: ~a~%" linha))))) ;; display LOCAL!
-    ;;(interage in out) tive que deletar essa linha, por que dava pau
+      (display (format "O Fulano disse: ~a~%" linha)) ;; display LOCAL!
+      (interage in out))));; tive que deletar essa linha, por que dava pau
    ;; Poderia entrar em loop e continuar interagindo!
 
 ;; Aceita conexão TCP e chama interage.
