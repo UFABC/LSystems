@@ -9,11 +9,11 @@
       (newline out)
       
       (display (read-line in))
+      (newline)    
       )))
 
 (define ler-axioma
    (lambda ()
-     (read-char) ; descartar ultimo caractere lido
      (let loop ((c (peek-char)) (exps '()))
        (cond ((eof-object? c)
               (error "EOF encountered while parsing { ... } clause"))
@@ -43,8 +43,6 @@
     (newline)
     (display "A - (F 1.5432) (F 1.4324) (F 1.432)")
     (newline)
-    (display "Defina os números de interações com: interacoes (numero)")
-    (newline)
     (display "Encerre o processo digitando o comando fim.")
     (newline)))
 
@@ -61,10 +59,11 @@
 
 (define executar-criacao
   (lambda ()
-    (let ((sistema-l (ler-axioma)))
-      (if (not (equal? sistema-l '(fim)))
-          (enviar-mensagem sistema-l)
-          (executar-criacao)))))
+    (read-char) ; descartar ultimo caractere lido
+    (let criar((lista-final '(1))(sistema-l (ler-axioma)))
+      (if (equal? sistema-l '(fim))
+          (enviar-mensagem `(,@(reverse lista-final)))
+          (criar (cons sistema-l lista-final) (ler-axioma))))))
     
 (define executar
   (lambda ()
