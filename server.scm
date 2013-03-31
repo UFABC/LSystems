@@ -1,21 +1,45 @@
 (use tcp      ;; TCP/IP
+     srfi-13  ;; String o;
      srfi-18) ;; Threads
-;;(load "draw-svg.scm")
+(load "draw-svg.scm")
 ;;(load "l-systems.scm")
 
 (define porta 9000)
+(define linguagem-atual "")
+(define svg-criado "svg vazio, algum erro ocorreu!")
 
+(define criar-svg
+  (lambda (texto)
+    (print texto)))
+
+(define editar-svg
+  (lambda (texto)
+    (print texto)))
+
+(define executar-svg
+  (lambda (texto)
+    (print texto)))
 (define interage
   (lambda (in out)
     ;; Manda um olá para o Fulano que conectou,
     ;; na porta out:
-    (display "Olá, Fulano do outro lado!" out)
+    (let ((linha (read-line in))) ;; lê da porta in
+      (display (format "Client enviou dados: ~a~%" linha))
+      
+      (let ((acao (substring linha 1 2))
+            (conteudo (substring linha 2 (- (string-length linha) 1))))
+        (cond ((string= acao "1")
+               (criar-svg conteudo))
+              ((string= acao "2")
+               (criar-svg conteudo))
+              ((string= acao "3")
+               (criar-svg conteudo))
+              (else
+               (print "Nenhuma opção válida")))));; display LOCAL!
+    (display svg-criado out)
     (newline out)
     (flush-output out) ;; esvazia o buffer, mandando o que estiver pendente
-    (let ((linha (read-line in))) ;; lê da porta in
-      (display (format "O Fulano disse: ~a~%" linha)) ;; display LOCAL!
-      (interage in out))));; tive que deletar essa linha, por que dava pau
-   ;; Poderia entrar em loop e continuar interagindo!
+    (interage in out)));; Poderia entrar em loop e continuar interagindo!
 
 ;; Aceita conexão TCP e chama interage.
 (define trata

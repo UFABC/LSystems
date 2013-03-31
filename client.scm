@@ -46,10 +46,17 @@
     (display "Encerre o processo digitando o comando fim.")
     (newline)))
 
+(define menu-iterar-novamente
+  (lambda ()
+    (display "Digite aqui o número de iterações para a última linguagem proposta:")))
+
 (define calcular-resposta 
   (lambda(entrada)
     (cond ((equal? entrada '1)
           (menu-criar-novo)
+          (executar-criacao))
+          ((equal? entrada '3)
+          (menu-iterar-novamente)
           (executar-criacao))
         (else
           (display "Parâmetro incorreto, digite novamente.")
