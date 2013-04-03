@@ -19,6 +19,7 @@
         (cond ((eof-object? c)
                (error "EOF encountered while parsing { ... } clause"))
               ((char=? c #\newline)
+               (display "$" out)
                (read-char)   ; discard
                (get-output-string out))
               ((char-whitespace? c)
@@ -52,9 +53,11 @@
     (newline)
     (display "O valor padrão é 45 graus, tanto para esquerda quanto para a direita.")
     (newline)
-    (display "Encerre o processo digitando o it e o número correspondente de iterações. EX: it 5")
+    (display "Digite it e o número correspondente de iterações. EX: it 5")
     (newline)
     (display "Valores opcionais, esq <angulo>, dir <angulo>. Angulo para esquerda e para a direita.")
+    (newline)
+    (display "Ao finalizar escreva a palavra fim, para encerrar a execução.")
     (newline)
     ))
 
@@ -83,7 +86,7 @@
   (lambda ()
     (read-char) ; descartar ultimo caractere lido
     (let criar((lista-final '(1))(sistema-l (ler-axioma)))
-      (if (equal? sistema-l "fim")
+      (if (equal? sistema-l "fim$")
           (enviar-mensagem `(,@(reverse lista-final)))
           (criar (cons sistema-l lista-final) (ler-axioma))))))
     
@@ -92,6 +95,7 @@
     (imprimir-menu)
     (newline)
     (let ((leitura (read)))
+      (display leitura)
       (if (not (equal? leitura 'sair))
           (begin
             (calcular-resposta  leitura)
