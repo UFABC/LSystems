@@ -1,16 +1,39 @@
 (declare (uses tcp))
 
 (define porta 9000)
+(load "draw-svg.scm")
 
 (define enviar-mensagem
   (lambda (mensagem)
     (let-values ( ((in out) (tcp-connect "localhost" porta)))
       (display mensagem out)
       (newline out)
-      
-      (display (read-line in))
+      (display "criando arquivo...")
+      (let ((imagem (read-line in)))
+        (xml-write-tag imagem)
+        (images->xml imagem "l-system.svg"))
+        
+      (display "arquivo criado")
       (newline)    
       )))
+
+(define ler-xml
+  (lambda (port)
+    (let ((out (open-output-string)))
+      (let loop ((c (peek-char port)))
+        (cond ((eof-object? c)
+               (read-char port)
+               (get-output-string out))
+              ((char=? c #\\)
+               (read-char port)   ; discard
+               (loop (peek-char port)))
+              ((char-whitespace? c)
+               (read-char port)
+               (loop (peek-char port)))
+              (else
+               (let ((exp (read-char port)))
+                 (display exp out)
+                 (loop (peek-char port)))))))))
 
 (define ler-axioma
   (lambda ()
@@ -95,7 +118,6 @@
     (imprimir-menu)
     (newline)
     (let ((leitura (read)))
-      (display leitura)
       (if (not (equal? leitura 'sair))
           (begin
             (calcular-resposta  leitura)
