@@ -13,17 +13,22 @@
       )))
 
 (define ler-axioma
-   (lambda ()
-     (let loop ((c (peek-char)) (exps '()))
-       (cond ((eof-object? c)
-              (error "EOF encountered while parsing { ... } clause"))
-             ((char=? c #\newline)
-              (read-char)   ; discard
-              `(,@(reverse exps)))
-             (else
-              (let ((exp (read)))
-                (loop (peek-char)
-                      (cons exp exps))))))))
+  (lambda ()
+    (let ((out (open-output-string)))
+      (let loop ((c (peek-char)))
+        (cond ((eof-object? c)
+               (error "EOF encountered while parsing { ... } clause"))
+              ((char=? c #\newline)
+               (read-char)   ; discard
+               (get-output-string out))
+              ((char-whitespace? c)
+               (display " " out)
+               (read-char)
+               (loop (peek-char)))
+              (else
+               (let ((exp (read-char)))
+                 (display exp out)
+                 (loop (peek-char)))))))))
 
 (define imprimir-menu
   (lambda ()
@@ -41,10 +46,17 @@
     (newline)
     (display "Sempre digite uma chave por linha e sua função separados por -, como no exemplo:")
     (newline)
-    (display "A - (F 1.5432) (F 1.4324) (F 1.432)")
+    (display "A - (F +) (F -) (F -)")
     (newline)
-    (display "Encerre o processo digitando o comando fim.")
-    (newline)))
+    (display "O sinal + significa que o ramo será desenhado para a esquerda, enquanto - irá virar para direito.")
+    (newline)
+    (display "O valor padrão é 45 graus, tanto para esquerda quanto para a direita.")
+    (newline)
+    (display "Encerre o processo digitando o it e o número correspondente de iterações. EX: it 5")
+    (newline)
+    (display "Valores opcionais, esq <angulo>, dir <angulo>. Angulo para esquerda e para a direita.")
+    (newline)
+    ))
 
 (define menu-iterar-novamente
   (lambda ()
@@ -54,6 +66,9 @@
   (lambda(entrada)
     (cond ((equal? entrada '1)
           (menu-criar-novo)
+          (executar-criacao))
+          ((equal? entrada '2)
+          (menu-iterar-novamente)
           (executar-criacao))
           ((equal? entrada '3)
           (menu-iterar-novamente)
@@ -68,7 +83,7 @@
   (lambda ()
     (read-char) ; descartar ultimo caractere lido
     (let criar((lista-final '(1))(sistema-l (ler-axioma)))
-      (if (equal? sistema-l '(fim))
+      (if (equal? sistema-l "fim")
           (enviar-mensagem `(,@(reverse lista-final)))
           (criar (cons sistema-l lista-final) (ler-axioma))))))
     

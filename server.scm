@@ -2,7 +2,7 @@
      srfi-13  ;; String o;
      srfi-18) ;; Threads
 (load "draw-svg.scm")
-;;(load "l-systems.scm")
+;(load "l-systems.scm")
 
 (define porta 9000)
 (define linguagem-atual "")
@@ -31,7 +31,7 @@
         (cond ((string= acao "1")
                (criar-svg conteudo))
               ((string= acao "2")
-               (criar-svg conteudo))
+               (editar-svg conteudo))
               ((string= acao "3")
                (criar-svg conteudo))
               (else
