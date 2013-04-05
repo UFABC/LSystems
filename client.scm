@@ -2,6 +2,7 @@
 
 (define porta 9000)
 (load "draw-svg.scm")
+(load "lsystem.scm")
 
 (define enviar-mensagem
   (lambda (mensagem)
@@ -9,11 +10,20 @@
       (display mensagem out)
       (newline out)
       (display "criando arquivo...")
-      (let ((imagem (read-line in)))
-        (xml-write-tag imagem)
-        (images->xml imagem "l-system.svg"))
+      (let ((imagem (read in)))
+        (print imagem)
+        (images->xml (desenhar-svg (string->list imagem) -0.5 0.5) "l-system.svg"))
         
       (display "arquivo criado")
+      (newline)    
+      )))
+
+(define menu-editar
+  (lambda ()
+    (let-values ( ((in out) (tcp-connect "localhost" porta)))
+      (display '(4) out)
+      (newline out)
+      (display (read-line in))
       (newline)    
       )))
 
@@ -66,19 +76,23 @@
 
 (define menu-criar-novo
   (lambda ()
-    (display "Você escolheu criar novo, digite um par, com a chava da linguagem e a linguagem usada.")
+    (display "Você escolheu criar novo l-system")
     (newline)
-    (display "Sempre digite uma chave por linha e sua função separados por -, como no exemplo:")
+    (display "Tecle enter a cada item inserido.")
+    (display "Digite { antes da primeira regra e } após a última regra.")
+    (display "A regra segue um formato deste exemplo A = F[+F][-F]).")
     (newline)
-    (display "A - (F +) (F -) (F -)")
+    (display "Significado dos simbolos:")
+    (display "[ -> empilha o estado atual e inicia um ramo com os valores do estado atual")
+    (display "] -> encerra o desenho do ramo e desempilha o estado anterior")
+    (display "+ -> aplica uma rotação para a direita no desenho da reta")
+    (display "- -> aplica uma rotação para a direita no desenho da reta")
+    (display "F -> desenha uma reta")
     (newline)
-    (display "O sinal + significa que o ramo será desenhado para a esquerda, enquanto - irá virar para direito.")
+    (display "O axioma será a variável da primeira regra digitada.")
+    (display "Após entrar com as regras, digite \"it\" <i>, onde i é o número de iterações ")
     (newline)
-    (display "O valor padrão é 45 graus, tanto para esquerda quanto para a direita.")
-    (newline)
-    (display "Digite it e o número correspondente de iterações. EX: it 5")
-    (newline)
-    (display "Valores opcionais, esq <angulo>, dir <angulo>. Angulo para esquerda e para a direita.")
+    (display "Valores opcionais: esq <angulo>, dir <angulo>, em radiano.")
     (newline)
     (display "Ao finalizar escreva a palavra fim, para encerrar a execução.")
     (newline)
@@ -88,21 +102,21 @@
   (lambda ()
     (display "Digite aqui o número de iterações para a última linguagem proposta:")))
 
-(define calcular-resposta 
+(define calcular-resposta
   (lambda(entrada)
     (cond ((equal? entrada '1)
-          (menu-criar-novo)
-          (executar-criacao))
+           (menu-criar-novo)
+           (executar-criacao))
           ((equal? entrada '2)
-          (menu-iterar-novamente)
-          (executar-criacao))
+           (menu-editar)
+           (executar-criacao))
           ((equal? entrada '3)
-          (menu-iterar-novamente)
-          (executar-criacao))
-        (else
-          (display "Parâmetro incorreto, digite novamente.")
-          (newline)
-          (executar)))
+           (menu-iterar-novamente)
+           (executar-criacao))
+          (else
+           (display "Parâmetro incorreto, digite novamente.")
+           (newline)
+           (executar)))
     ))
 
 (define executar-criacao
